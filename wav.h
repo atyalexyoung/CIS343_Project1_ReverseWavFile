@@ -7,7 +7,19 @@
 */
 struct wav_header
 {
-    
+    char* riffy_boi; // MUST BE 'RIFF' 0-3
+    int num_bytes; // number of bytes after subracting 8 4-7
+    char* file_type; // MUST BE 'WAVE' 8-11
+    char* format_chunk; // MUST BE 'fmt' 12-15
+    int length_of_format_data; // 16-19
+    short format_type; // 20-21
+    short num_channels; // 22-23
+    int sample_rate; // 24-27
+    // 28-31 is (bits per sample * channels) / data_type_size
+    // 32-33 (bits per sample * channels) / data_type_size
+    char* bits_per_sample; // 34-35
+    char* data_header; // MUST BE 'data' 36-39
+    char* data_section_size; // 40-43
 };
 
 
@@ -21,11 +33,12 @@ struct wav_file
     char* data;
 };
 
+
 /***
  * Gets the header information from the data
  * gets first 44 bytes of file, extracts data, creates header struct
 */
-int get_header(char* data, char* wav_file);
+int get_header(struct wav_file, struct wav_header);
 
 
 /**
@@ -34,7 +47,7 @@ int get_header(char* data, char* wav_file);
  * takes retruned bytes and creates new wav_file
  * then set the header, data size, and pointer to data
 */
-int load_file(char* data);
+char* load_file(char* file_path);
 
 
 /***
@@ -44,14 +57,6 @@ int load_file(char* data);
  * 
 */
 int save_file(struct wav_file, char* file_path);
-
-
-
-
-
-
-
-
 
 
 #endif
