@@ -2,16 +2,13 @@
 #include "wav.h"
 #include "file_lib.h"
 
-struct wav_file audio;
-struct wav_header header;
-char* file_path;
-file_path = "Abdication.wav";
-
-
+/**
+ * returns a pointer to a wav_file struct
+*/
 char* load_file(char* file_path)
 {
     size_t size;
-
+    struct wav_file audio;
     char* file_contents = read_file(file_path, &size);
 
     audio.wav_header_pointer = file_contents;
@@ -21,7 +18,9 @@ char* load_file(char* file_path)
     return &audio;
 }
 
-
+/**
+ * returns errorno, writes to disk
+*/
 int save_file(struct wav_file audio, char* file_path)
 {
     int errorno = write_file(file_path, audio.wav_header_pointer, audio.file_size);
@@ -36,7 +35,9 @@ int save_file(struct wav_file audio, char* file_path)
     return errorno;
 }
 
-// header is gotten
+/**
+ * return the errorno, and will set the wav_header that is passed in
+*/
 int get_header(struct wav_file audio, struct wav_header header)
 {
     int riff_status, file_type_status, format_chunk_status, data_header_status;
