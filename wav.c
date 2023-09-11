@@ -43,39 +43,53 @@ int save_file(struct wav_file audio, char* file_path)
 //pass in pointer to the wav_file struct... no need to pass in wav_header nbecause we havea  wav_header in the wav_file
 int get_header(struct wav_file* audio)
 {
-    int riff_status, file_type_status, format_chunk_status, data_header_status;
 
     // get riff and check if riff
-    
-    riff_status = check_riff(&audio->wav_header_pointer[0]);
+    int riff_status = check_riff(&audio->wav_header_pointer[0]);
     if(riff_status != 0)
     {
         return 1;
     }
 
     // get file type and check if 'WAVE'
-    
-    file_type_status = check_file_type(&audio->wav_header_pointer[8]);
+    int file_type_status = check_file_type(&audio->wav_header_pointer[8]);
     if(file_type_status != 0)
     {
-        return 1;
+        return 2;
     }
 
     // get format chunk and check if 'fmt'
-    
-    format_chunk_status = check_format_chunk_status(&audio->wav_header_pointer[12]);
+    int format_chunk_status = check_format_chunk_status(&audio->wav_header_pointer[12]);
     if(format_chunk_status != 0)
     {
-        return 1;
+        return 3;
     }
 
     // get data header and check if 'data' 36-39
-    
-    data_header_status = check_header_status(&audio->wav_header_pointer[36]);
+    int data_header_status = check_header_status(&audio->wav_header_pointer[36]);
     if(data_header_status != 0)
     {
-        return 1;
+        return 4;
     }    
+
+    int format_type_status = check_format_type(&audio->wav_header_pointer[20]);
+    if(format_type_status != 0)
+    {
+        return 5;
+    }
+
+    int num_channels_status = check_num_channels(&audio->wav_header_pointer[22]);
+    if(num_channels_status != 0)
+    {
+        return 6;
+    }
+
+    int num_bytes_in_file_minus_eight_status = check_num_bytes_minus_eight(&audio->wav_header_pointer[4], &audio->file_size);
+    if(num_bytes_in_file_minus_eight_status != 0)
+    {
+        return 7;
+    }
+
 
     // NEED TO BE PRINTED OUT
     audio->wav_header_pointer->num_channels = &audio->wav_header_pointer[22]; // 22-23
@@ -84,6 +98,11 @@ int get_header(struct wav_file* audio)
 
     return 0;
 }
+
+
+// WE ALSO NEED TO CHECK THE FILE HAS 2 CHANNELS
+// WE ALSO NEED TO CHEC KTHAT THE FORMAT TYPE IS THE VALUE 1
+// WE ALSO NEED TO CHECK THAT THE INTEGER IN BYTES 4-7 IS THE (FILE_SIZE - 8)
 
 // guess what these functions doo
 int check_riff(char* start)
@@ -124,5 +143,31 @@ int check_header_status(char* start)
     return 1;
 }
 
+check_format_type(char* start)
+{
+    if((int)start == 1)
+    {
+        return 0;
+    }
+    return 1;
+}
 
+check_num_channels(char* start)
+{
+    if((int)start == 2)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+
+check_num_bytes_minus_eight(char* start, int file_size)
+{
+    if((int)start == (file_size - 8))
+    {
+        return 0;
+    }
+    return 1;
+}
 
