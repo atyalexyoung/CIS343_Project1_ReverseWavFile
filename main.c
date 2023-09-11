@@ -61,7 +61,4 @@ int main(int args, const char * argv[])
         j+=byte_rate;
     }
 
-    
-
-
 }
