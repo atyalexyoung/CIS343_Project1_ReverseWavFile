@@ -38,7 +38,7 @@ struct wav_file
  * Gets the header information from the data
  * gets first 44 bytes of file, extracts data, creates header struct
 */
-int get_header(struct wav_file, struct wav_header);
+int get_header(struct wav_file);
 
 
 /**
@@ -47,7 +47,7 @@ int get_header(struct wav_file, struct wav_header);
  * takes retruned bytes and creates new wav_file
  * then set the header, data size, and pointer to data
 */
-char* load_file(char* file_path);
+struct load_file(char* file_path);
 
 
 /***
