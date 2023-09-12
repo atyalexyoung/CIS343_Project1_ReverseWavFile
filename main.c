@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "wav.h"
+#include "file_lib.h"
 
 
 int print_error_message(int error)

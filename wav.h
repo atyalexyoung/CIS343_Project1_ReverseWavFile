@@ -15,7 +15,7 @@ struct wav_header
     short format_type; // 20-21
     short num_channels; // 22-23
     int sample_rate; // 24-27
-    // 28-31 is (sample rate * bits per sample * channels) / 8
+    int byte_rate; // 28-31 is (sample rate * bits per sample * channels) / 8
     // 32-33 (bits per sample * channels) / data_type_size
     char* bits_per_sample; // 34-35
     char* data_header; // MUST BE 'data' 36-39

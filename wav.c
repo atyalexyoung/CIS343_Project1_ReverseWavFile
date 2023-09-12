@@ -1,6 +1,73 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "wav.h"
 #include "file_lib.h"
+// guess what these functions doo
+int check_riff(char* start)
+{
+    if(*start == 'R' && *(start + 1) == 'I' && *(start + 2) == 'F' && *(start + 3) == 'F')
+    {
+        return 0;
+    }
+    return 1;
+}
+
+int check_file_type(char* start)
+{
+    if(*start == 'W' && *(start + 1) == 'A' && *(start + 2) == 'V' && *(start + 3) == 'E')
+    {
+        return 0;
+    }
+    return 2;
+}
+
+
+int check_format_chunk_status(char* start)
+{
+    if(*start == 'f' && *(start + 1) == 'm' && *(start + 2) == 't')
+    {
+        return 0;
+    }
+    return 3;
+}
+
+
+int check_header_status(char* start)
+{
+    if(*start == 'd' && *(start + 1) == 'a' && *(start + 2) == 't' && *(start + 3) == 'a')
+    {
+        return 0;
+    }
+    return 4;
+}
+
+int check_format_type(char* start)
+{
+    if((int)*start == 1)
+    {
+        return 0;
+    }
+    return 5;
+}
+
+int check_num_channels(char* start)
+{
+    if((int)*start == 2)
+    {
+        return 0;
+    }
+    return 6;
+}
+
+
+int check_num_bytes_minus_eight(char* start, int file_size)
+{
+    if((int)*start == (file_size - 8))
+    {
+        return 0;
+    }
+    return 7;
+}
 
 /***
  * This function takes a file path as a parameter
@@ -13,15 +80,17 @@ struct wav_file load_file(char* file_path)
     struct wav_file audio;
     char* file_contents = read_file(file_path, &size);
 
-    printf("File size: %d",&size);
+    printf("File size: %ln",&size);
 
 
     // SHOULD WE DO THIS INSTEAD SINCE WE KNOW IT WILL ALWAYS BE 44????
-    char header_content[44] = file_contents;
+    //char header_content[44] = file_contents;
 
-    audio.wav_header_pointer = header_content;
+    audio.wav_header_pointer = &file_contents;
     audio.file_size = size;
-    audio.data = file_contents[44];
+
+    // SHOULD WE MAKE THIS AN ARRAY ALSO INSTEAD OF A POINTER
+    audio.data = &file_contents[44];
 
     free(file_contents);
     return audio;
@@ -55,37 +124,37 @@ int get_header(struct wav_file* audio)
 {
 
     // Getting variables for from the wav header, and checking their values to proceed.
-    int riff_status = check_riff(&audio->wav_header_pointer[0]);
+    int riff_status = check_riff(&(audio->wav_header_pointer[0]));
     if(riff_status != 0)
     {
         return 1;
     }
 
-    int file_type_status = check_file_type(&audio->wav_header_pointer[8]);
+    int file_type_status = check_file_type(&(audio->wav_header_pointer[8]));
     if(file_type_status != 0)
     {
         return 2;
     }
 
-    int format_chunk_status = check_format_chunk_status(&audio->wav_header_pointer[12]);
+    int format_chunk_status = check_format_chunk_status(&(audio->wav_header_pointer[12]));
     if(format_chunk_status != 0)
     {
         return 3;
     }
 
-    int data_header_status = check_header_status(&audio->wav_header_pointer[36]);
+    int data_header_status = check_header_status(&(audio->wav_header_pointer[36]));
     if(data_header_status != 0)
     {
         return 4;
     }    
 
-    int format_type_status = check_format_type(&audio->wav_header_pointer[20]);
+    int format_type_status = check_format_type(&(audio->wav_header_pointer[20]));
     if(format_type_status != 0)
     {
         return 5;
     }
 
-    int num_channels_status = check_num_channels(&audio->wav_header_pointer[22]);
+    int num_channels_status = check_num_channels(&(audio->wav_header_pointer[22]));
     if(num_channels_status != 0)
     {
         return 6;
@@ -116,70 +185,4 @@ int get_header(struct wav_file* audio)
 // WE ALSO NEED TO CHEC KTHAT THE FORMAT TYPE IS THE VALUE 1
 // WE ALSO NEED TO CHECK THAT THE INTEGER IN BYTES 4-7 IS THE (FILE_SIZE - 8)
 
-// guess what these functions doo
-int check_riff(char* start)
-{
-    if(start == 'R' && (start + 1) == 'I' && *(start + 2) == 'F' && (start + 3) == 'F')
-    {
-        return 0;
-    }
-    return 1;
-}
-
-int check_file_type(char* start)
-{
-    if(start == 'W' && (start + 1) == 'A' && *(start + 2) == 'V' && (start + 3) == 'E')
-    {
-        return 0;
-    }
-    return 2;
-}
-
-
-int check_format_chunk_status(char* start)
-{
-    if(start == 'f' && (start + 1) == 'm' && *(start + 2) == 't')
-    {
-        return 0;
-    }
-    return 3;
-}
-
-
-int check_header_status(char* start)
-{
-    if(start == 'd' && (start + 1) == 'a' && *(start + 2) == 't' && (start + 3) == 'a')
-    {
-        return 0;
-    }
-    return 4;
-}
-
-check_format_type(char* start)
-{
-    if((int)start == 1)
-    {
-        return 0;
-    }
-    return 5;
-}
-
-check_num_channels(char* start)
-{
-    if((int)start == 2)
-    {
-        return 0;
-    }
-    return 6;
-}
-
-
-check_num_bytes_minus_eight(char* start, int file_size)
-{
-    if((int)start == (file_size - 8))
-    {
-        return 0;
-    }
-    return 7;
-}
 
