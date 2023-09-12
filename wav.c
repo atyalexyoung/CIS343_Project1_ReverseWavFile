@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "wav.h"
 #include "file_lib.h"
+
 // guess what these functions doo
 int check_riff(char* start)
 {

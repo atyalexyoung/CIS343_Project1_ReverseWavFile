@@ -53,12 +53,15 @@ int main(int args, const char * argv[])
         return err;
     }
 
+    // bits per sample -> bytes
+
     char reversed_wav_file[original_wav_file.file_size];
     int byte_rate = original_wav_file.wav_header_pointer->byte_rate;
 
     int j = 0;
     for(int i = (original_wav_file.file_size - 1); i >= 0; i -= byte_rate)
     {
+        // make a little byte arrays instead of just using one address???
         reversed_wav_file[j] = original_wav_file.data[i];
         j+=byte_rate;
     }

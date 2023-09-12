@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "file_lib.h"
 
 char* read_file(const char* path, size_t* fileSize) {
     FILE* file = fopen(path, "rb"); // Open the file in binary mode

@@ -1,5 +1,5 @@
-#ifndef 	__H_LIB_FILE__
-#define		__H_LIB_FILE__
+#ifndef 	__H_LIB_WAV__
+#define		__H_LIB_WAV__
 
 /***
  * holds information about the header of the wav file
