@@ -81,6 +81,8 @@ struct wav_file load_file(char* file_path)
     struct wav_file audio;
     char* file_contents = read_file(file_path, &size);
 
+    // check if null or read in
+
     printf("File size: %ln",&size);
 
 

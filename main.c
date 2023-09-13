@@ -43,6 +43,12 @@ int main(int args, const char * argv[])
     char* filepath = "/Abdication.wav";
     struct wav_file original_wav_file = load_file(filepath);
 
+    // check if null or read in
+
+    // put \n in every print message
+
+    // free contents in wav.c
+
     // extract header information
     int err = get_header(&original_wav_file);
 
@@ -55,6 +61,16 @@ int main(int args, const char * argv[])
 
     // bits per sample -> bytes
 
+
+    char* reversed = malloc(original_wav_file.file_size);
+
+
+
+
+
+
+
+
     char reversed_wav_file[original_wav_file.file_size];
     int byte_rate = original_wav_file.wav_header_pointer->byte_rate;
 
@@ -65,5 +81,7 @@ int main(int args, const char * argv[])
         reversed_wav_file[j] = original_wav_file.data[i];
         j+=byte_rate;
     }
+    free(reversed);
 
+    
 }
