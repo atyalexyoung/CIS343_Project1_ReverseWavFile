@@ -56,7 +56,7 @@ struct wav_file load_file(char* file_path);
  * then calls write_file from file lib to write to disk
  * 
 */
-int save_file(struct wav_file, char* file_path);
+int save_file(char* reversed, size_t byte_array_size, char* file_path);
 
 
 #endif
