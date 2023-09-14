@@ -76,11 +76,11 @@ int main(int args, char** argv)
     ***************************************************/
     char* reversed = malloc(original_wav_file.file_size);
     // get bytes per sample from ((bits/sample)/8)
-    int step_size = *original_wav_file.wav_header_pointer.bits_per_sample / 8;
+    int step_size = (*original_wav_file.wav_header_pointer.bits_per_sample * 2) / 8;
     //int byte_rate = original_wav_file.wav_header_pointer.byte_rate;
 
-    printf("%d",original_wav_file.file_size);
-
+    printf("%d\n",original_wav_file.file_size);
+    printf("%d\n",original_wav_file.wav_header_pointer.bits_per_sample);
 
     for(int i =0; i<44;i++){
         reversed[i] = original_wav_file.original_data[i];
@@ -96,6 +96,7 @@ int main(int args, char** argv)
 
 
    int j = 44;
+   //step_size = 2 * step_size;
     for(int i = (original_wav_file.file_size - step_size); i > 0; i -= step_size)
     {
         memcpy(&reversed[j], &original_wav_file.data[i], (size_t)step_size);
