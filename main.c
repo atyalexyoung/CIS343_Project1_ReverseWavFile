@@ -50,7 +50,7 @@ int print_error_message(int error)
 
 
 
-int main(int args, char** argv[])
+int main(int args, char** argv)
 {
 
     /****************************************************
@@ -79,8 +79,8 @@ int main(int args, char** argv[])
     ***************************************************/
     char* reversed = malloc(original_wav_file.file_size);
     // get bytes per sample from ((bits/sample)/8)
-    int step_size = *original_wav_file.wav_header_pointer->bits_per_sample / 8;
-    int byte_rate = original_wav_file.wav_header_pointer->byte_rate;
+    int step_size = *original_wav_file.wav_header_pointer.bits_per_sample / 8;
+    int byte_rate = original_wav_file.wav_header_pointer.byte_rate;
 
 
     /****************************************************

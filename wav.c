@@ -27,12 +27,12 @@ int check_riff(char* start)
 int check_file_type(char* start)
 {
     printf("Checking WAVE and got: ");
-    for(int i = 0; i < 4; i++)
+    for(int i = 8; i < 12; i++)
     {
         printf("%c",start[i]);
     }
 
-    if(*start == 'W' && *(start + 1) == 'A' && *(start + 2) == 'V' && *(start + 3) == 'E')
+    if(start[8] == 'W' && start[9] == 'A' && start[10] == 'V' && start[11] == 'E')
     {
         printf("\n");
         return 0;
@@ -46,12 +46,12 @@ int check_file_type(char* start)
 int check_format_chunk_status(char* start)
 {
     printf("Checking fmt and got: ");
-    for(int i = 0; i < 3; i++)
+    for(int i = 12; i < 16; i++)
     {
         printf("%c",start[i]);
     }
     
-    if(*start == 'f' && *(start + 1) == 'm' && *(start + 2) == 't')
+    if(start[12] == 'f' && start[13] == 'm' && start[14] == 't')
     {
         printf("\n");
         return 0;
@@ -64,12 +64,12 @@ int check_format_chunk_status(char* start)
 int check_header_status(char* start)
 {
     printf("Checking data and got: ");
-    for(int i = 0; i < 4; i++)
+    for(int i = 36; i < 40; i++)
     {
         printf("%c",start[i]);
     }
     
-    if(*start == 'd' && *(start + 1) == 'a' && *(start + 2) == 't' && *(start + 3) == 'a')
+    if(start[36] == 'd' && start[37] == 'a' && start[38] == 't' && start[39] == 'a')
     {
         printf("\n");
         return 0;
@@ -81,7 +81,7 @@ int check_header_status(char* start)
 
 int check_format_type(char* start)
 {
-    if((short)*start == 1)
+    if(start[20] == 1)
     {
         return 0;
     }
@@ -90,7 +90,7 @@ int check_format_type(char* start)
 
 int check_num_channels(char* start)
 {
-    if((short)*start == 2)
+    if(start[23] == 2)
     {
         return 0;
     }
@@ -100,7 +100,7 @@ int check_num_channels(char* start)
 
 int check_num_bytes_minus_eight(char* start, int file_size)
 {
-    if((int)*start == (file_size - 8))
+    if(start[4] == (file_size - 8))
     {
         return 0;
     }
@@ -127,8 +127,7 @@ struct wav_file load_file(char* file_path)
 
     // SHOULD WE DO THIS INSTEAD SINCE WE KNOW IT WILL ALWAYS BE 44????
     //char header_content[44] = file_contents;
-
-    audio.wav_header_pointer = file_contents;
+    audio.original_data = file_contents;
     audio.file_size = size;
 
     // SHOULD WE MAKE THIS AN ARRAY ALSO INSTEAD OF A POINTER
@@ -167,55 +166,57 @@ int get_header(struct wav_file* audio)
 {
 
     // Getting variables for from the wav header, and checking their values to proceed.
-    int riff_status = check_riff(&audio->wav_header_pointer[0]);
+
+    //THIS IS THE RIGHT WAY TO DO IT PER WOODRING
+    int riff_status = check_riff(audio->original_data);
     if(riff_status != 0)
     {
         return 1;
     }
 
-    int file_type_status = check_file_type(&audio->wav_header_pointer[8]);
+    int file_type_status = check_file_type(audio->original_data);
     if(file_type_status != 0)
     {
         return 2;
     }
 
-    int format_chunk_status = check_format_chunk_status(&audio->wav_header_pointer[12]);
+    int format_chunk_status = check_format_chunk_status(audio->original_data);
     if(format_chunk_status != 0)
     {
         return 3;
     }
 
-    int data_header_status = check_header_status(&audio->wav_header_pointer[36]);
+    int data_header_status = check_header_status(audio->original_data);
     if(data_header_status != 0)
     {
         return 4;
     }    
 
-    int format_type_status = check_format_type(&audio->wav_header_pointer[20]);
+    int format_type_status = check_format_type(audio->original_data);
     if(format_type_status != 0)
     {
         return 5;
     }
 
-    int num_channels_status = check_num_channels(&audio->wav_header_pointer[22]);
+    int num_channels_status = check_num_channels(audio->original_data);
     if(num_channels_status != 0)
     {
         return 6;
     }
 
-    int num_bytes_in_file_minus_eight_status = check_num_bytes_minus_eight(&audio->wav_header_pointer[4], (int)&audio->file_size);
+    int num_bytes_in_file_minus_eight_status = check_num_bytes_minus_eight(audio->original_data, (int)audio->file_size);
     if(num_bytes_in_file_minus_eight_status != 0)
     {
         return 7;
     }
 
     // Setting variables in the wav_header struct and printing their values out
-    audio->wav_header_pointer->num_channels = &audio->wav_header_pointer[22]; // 22-23
-    printf("Number of channels: %d \n",audio->wav_header_pointer->num_channels);
+    //audio->wav_header_pointer->num_channels = &audio->wav_header_pointer[22]; // 22-23
+    //printf("Number of channels: %d \n",audio->wav_header_pointer->num_channels);
 
     // get the bits per sample to be the step size while reversing
-    audio->wav_header_pointer->bits_per_sample = &audio->wav_header_pointer[34]; // 34 - 35
-    printf("Bits per sample: %d \n", audio->wav_header_pointer->bits_per_sample);
+    //audio->wav_header_pointer->bits_per_sample = &audio->wav_header_pointer[34]; // 34 - 35
+    //printf("Bits per sample: %d \n", audio->wav_header_pointer->bits_per_sample);
 
 
     return 0;

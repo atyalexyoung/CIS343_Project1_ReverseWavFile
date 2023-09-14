@@ -28,9 +28,10 @@ struct wav_header
 */
 struct wav_file
 {
-    struct wav_header* wav_header_pointer;
+    struct wav_header wav_header_pointer;
     int file_size;
     char* data;
+    char* original_data;
 };
 
 
