@@ -81,7 +81,10 @@ int check_header_status(char* start)
 
 int check_format_type(char* start)
 {
-    if(start[20] == 1)
+    short* i = (short*)&start[20];
+    short x = *i;
+
+    if(x == 1)
     {
         return 0;
     }
@@ -90,22 +93,17 @@ int check_format_type(char* start)
 
 int check_num_channels(char* start)
 {
-    if(start[23] == 2)
+    short* i = (short*)&start[22];
+
+    short x = *i;
+
+    if(x == 2)
     {
         return 0;
     }
     return 6;
 }
 
-
-int check_num_bytes_minus_eight(char* start, int file_size)
-{
-    if(start[4] == (file_size - 8))
-    {
-        return 0;
-    }
-    return 7;
-}
 
 /***
  * This function takes a file path as a parameter
@@ -122,20 +120,17 @@ struct wav_file load_file(char* file_path)
         printf("Error reading in the file \n");
     }
 
-    printf("File size: %ln \n",&size);
-
 
     // SHOULD WE DO THIS INSTEAD SINCE WE KNOW IT WILL ALWAYS BE 44????
     //char header_content[44] = file_contents;
     audio.original_data = file_contents;
     audio.file_size = size;
-
     // SHOULD WE MAKE THIS AN ARRAY ALSO INSTEAD OF A POINTER
     audio.data = &file_contents[44];
 
 
     // SHOULD WE FREE THE FILE CONTENTS OR WOULD THAT GET RID OF OUR POINTERS
-    //free(file_contents);
+    free(file_contents);
     return audio;
 }
 
@@ -204,11 +199,6 @@ int get_header(struct wav_file* audio)
         return 6;
     }
 
-    int num_bytes_in_file_minus_eight_status = check_num_bytes_minus_eight(audio->original_data, (int)audio->file_size);
-    if(num_bytes_in_file_minus_eight_status != 0)
-    {
-        return 7;
-    }
 
     // Setting variables in the wav_header struct and printing their values out
     //audio->wav_header_pointer->num_channels = &audio->wav_header_pointer[22]; // 22-23

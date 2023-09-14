@@ -30,9 +30,6 @@ int print_error_message(int error)
     case 6:
         printf("There should be only 2 channels but you think you're better with more (or less) don't you. Try something with 2 channels like all the cool stereo kids \n");
         break;
-    case 7:
-        printf("This one should be (n - 8) where n = the number of bytes of the file. Because why wouldn't it be. But it's not in your case so idk try something else. \n");
-        break;
     default:
         printf("        ...some other mysterious error has occured....               ....spooooky \n");
         break;
@@ -80,22 +77,34 @@ int main(int args, char** argv)
     char* reversed = malloc(original_wav_file.file_size);
     // get bytes per sample from ((bits/sample)/8)
     int step_size = *original_wav_file.wav_header_pointer.bits_per_sample / 8;
-    int byte_rate = original_wav_file.wav_header_pointer.byte_rate;
+    //int byte_rate = original_wav_file.wav_header_pointer.byte_rate;
 
+    printf("%d",original_wav_file.file_size);
+
+
+    for(int i =0; i<44;i++){
+        reversed[i] = original_wav_file.original_data[i];
+    }
+
+    //memcpy(reversed,&original_wav_file.original_data,44);
 
     /****************************************************
      * REVERSING THE WAV
     ***************************************************/
     // possibly wrong if the original_wav_file.file_size is not where we want it to be due to header?
-    int j = 0;
+    
+
+
+   int j = 44;
     for(int i = (original_wav_file.file_size - step_size); i > 0; i -= step_size)
     {
         memcpy(&reversed[j], &original_wav_file.data[i], (size_t)step_size);
+        j += step_size;
     }
 
 
     // append header??
-    int success = write_file(*argv[2], reversed, original_wav_file.file_size);
+    int success = write_file(argv[2], reversed, original_wav_file.file_size);
 
 
     /****************************************************
