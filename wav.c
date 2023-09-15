@@ -125,6 +125,7 @@ struct wav_file load_file(char* file_path)
     //char header_content[44] = file_contents;
     audio.original_data = file_contents;
     audio.file_size = size;
+
     // SHOULD WE MAKE THIS AN ARRAY ALSO INSTEAD OF A POINTER
     audio.data = &file_contents[44];
 

@@ -76,11 +76,13 @@ int main(int args, char** argv)
     ***************************************************/
     char* reversed = malloc(original_wav_file.file_size);
     // get bytes per sample from ((bits/sample)/8)
-    int step_size = (*original_wav_file.wav_header_pointer.bits_per_sample * 2) / 8;
+    //int step_size = (*original_wav_file.wav_header_pointer.bits_per_sample * 2) / 8;
     //int byte_rate = original_wav_file.wav_header_pointer.byte_rate;
 
     printf("%d\n",original_wav_file.file_size);
-    printf("%d\n",original_wav_file.wav_header_pointer.bits_per_sample);
+    short* g = (short*)&original_wav_file.original_data[34];
+    short step_size = ((*g) * 2) / 8;
+    //printf("%d\n",original_wav_file.wav_header_pointer.bits_per_sample);
 
     for(int i =0; i<44;i++){
         reversed[i] = original_wav_file.original_data[i];
@@ -93,9 +95,24 @@ int main(int args, char** argv)
     ***************************************************/
     // possibly wrong if the original_wav_file.file_size is not where we want it to be due to header?
     
+    printf("Step size: %d\n\n", step_size);
+    original_wav_file.file_size = original_wav_file.file_size;
+    int i = original_wav_file.file_size - step_size;
+    int j = 44;
+    while(i > 44)
+    {
 
+        for(int h = 0; h<4; h++){
+            reversed[j+h] = original_wav_file.data[i+h];
+        }
+        //memcpy(&reversed[j], &original_wav_file.data[i], step_size);
+        printf("Copying %d to %d.\n", i, j);
+        
+        j = j + step_size;
+        i = i - step_size;
+    }
 
-   int j = 44;
+  /* int j = 44;
    //step_size = 2 * step_size;
     for(int i = (original_wav_file.file_size - step_size); i > 0; i -= step_size)
     {
@@ -103,7 +120,7 @@ int main(int args, char** argv)
         j += step_size;
     }
 
-
+*/
     // append header??
     int success = write_file(argv[2], reversed, original_wav_file.file_size);
 
